@@ -14,6 +14,8 @@
     <script defer src="/__/firebase/4.6.2/firebase-storage.js"></script>
     <!-- initialize the SDK after all desired features are loaded -->
     <script defer src="/__/firebase/init.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
 
     <style media="screen">
       body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
@@ -38,7 +40,61 @@
 
     </div>
     <p id="load">Firebase SDK Loading&hellip;</p>
+    
+    <!-- <form enctype="multipart/form-data">
+    <input id="upload" type=file   accept="text/html" name="files[]" size=30>
+    </form> -->
+    
+    <input type="file" id="fileinput"/>
+    <input type='button' id='btnLoad' value='Load' onclick='handleFileSelect();'>
+    <div id="editor"></div>
+    
+    
+    
+    <script>        
+      function handleFileSelect()
+      {               
+        if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+          alert('The File APIs are not fully supported in this browser.');
+          return;
+        }   
 
+        input = document.getElementById('fileinput');
+        if (!input) {
+          alert("Um, couldn't find the fileinput element.");
+        }
+        else if (!input.files) {
+          alert("This browser doesn't seem to support the `files` property of file inputs.");
+        }
+        else if (!input.files[0]) {
+          alert("Please select a file before clicking 'Load'");               
+        }
+        else {
+          file = input.files[0];
+          fr = new FileReader();
+          fr.onload = makePostRequest;
+          fr.readAsText(file);
+          console.log("hawt ", fr.result);
+          //makePostRequest();
+          //fr.readAsDataURL(file);
+        }
+      }
+      
+      function makePostRequest() {
+        console.log("doing post request, with text: ", fr.result);
+        console.log(fr.result);
+        $.post( "http://127.0.0.1:5000/v1/sat-solver/instance", { fileContents: fr.result, time: "2pm" })
+        .done(function( data ) {
+          alert( "Data Loaded: " + data );
+        });
+        
+      }
+    
+
+      function receivedText() {
+        document.getElementById('editor').appendChild(document.createTextNode(fr.result));
+      }           
+    </script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
