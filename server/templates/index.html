@@ -139,27 +139,32 @@
       console.log("doing post request, with text: ", fr.result);
       console.log(fr.result);
       console.log(typeof(fr.result))
-      // $.ajax({
-      //   type: 'POST',
-      //   url: '/v1/sat-solver/instance',
-      //   data: 's',
-      //   success: function(data) {
-      //     console.log('Request completed!')
-      //     alert('data: ' + data);
-      //   },
-      //   error: function(err) {
-      //     console.log(err)
-      //   },
-      //   contentType: "application/json",
-      //   dataType: 'json',
-      // });
-      $.post("/v1/health", {
-          fileContents: 'fdjsak',
-          time: "2pm"
-        })
-        .done(function(data) {
-          alert("Data Loaded: " + data);
-        });
+      $.ajax({
+        type: 'POST',
+        url: '/v1/sat-solver/instance',
+        data: JSON.stringify({
+          fileContents: fr.result
+        }),
+        success: function(data) {
+          console.log('Request completed!')
+          alert('data: ' + data);
+        },
+        error: function(request, status, errThrown) {
+          console.log('ERROR!');
+          console.log(status);
+          console.log(errThrown);
+        },
+        contentType: "application/json",
+        dataType: 'json',
+      });
+
+      // $.post("/v1/health", {
+      //     fileContents: 'fdjsak',
+      //     time: "2pm"
+      //   })
+      //   .done(function(data) {
+      //     alert("Data Loaded: " + data);
+      //   });
 
     }
 
