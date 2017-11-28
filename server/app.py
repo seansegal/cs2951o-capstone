@@ -3,6 +3,7 @@ import subprocess
 import random
 from flask_cors import CORS, cross_origin
 import json
+import os
 
 app = Flask(__name__)
 
@@ -32,7 +33,6 @@ def _create_cnf_file_from_json(jsonCNF):
 """
 @app.route('/v1/health', methods=['GET', 'POST'])
 def health():
-    print('HERE!')
     return jsonify({'success': True})
 
 """
@@ -42,15 +42,14 @@ def health():
 def sat_solver():
     print(request.method)
     if request.method == 'POST':
-        print('HERE!')
         body = json.loads(request.data.decode('utf-8'))
         if 'fileContents' in body:
             fileContents = body['fileContents']
             file_name = CONSTANTS['TMP_FILE_NAME'] + str(random.randint(0, 1000))
-            with open('../solvers/sat-solver/input/' + file_name, 'w') as f:
+            with open('../solvers/sat-solver/solver1/input/' + file_name, 'w') as f:
                 f.write(fileContents)
                 try:
-                    output = subprocess.check_output(['./run.sh', '../input/' + file_name], cwd='../solvers/sat-solver/solver1')
+                    output = subprocess.check_output(['./run.sh', 'input/' + file_name], cwd='../solvers/sat-solver/solver1')
                     return jsonify({'results': output.decode('utf-8')})
                 except Exception as e:
                     print(e)
