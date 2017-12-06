@@ -4,6 +4,7 @@ import random
 from flask_cors import CORS, cross_origin
 import json
 import os
+import uuid
 
 app = Flask(__name__)
 
@@ -35,17 +36,19 @@ def _create_cnf_file_from_json(jsonCNF):
 def health():
     return jsonify({'success': True})
 
+
 """
-    Test endpoint which runs a Bash script and returns the output.
+    Endpoint which solves a SAT instance synchronously. In other words, this post
+    request will hang until the solver returns or times out.
 """
-@app.route('/v1/sat-solver/instance', methods=['POST'])
-def sat_solver():
-    print(request.method)
+@app.route('/v1/sat-solver/solve', methods=['POST'])
+def solve_sat():
     if request.method == 'POST':
         body = json.loads(request.data.decode('utf-8'))
         if 'fileContents' in body:
             fileContents = body['fileContents']
-            file_name = CONSTANTS['TMP_FILE_NAME'] + str(random.randint(0, 1000)) + '.cnf'
+            file_id = str(uuid.uuid4())
+            file_name = CONSTANTS['TMP_FILE_NAME'] + file_id + '.cnf'
             with open('../solvers/sat-solver/s1/input/' + file_name, 'w') as f:
                 f.write(fileContents)
                 f.flush()
@@ -54,17 +57,31 @@ def sat_solver():
                     return jsonify({'results': output.decode('utf-8')})
                 except Exception as e:
                     print(e)
-
-
         else:
             return 'Invalid JSON: Missing fileContents field'
         return jsonify({'success': True})
 
     return 'Invalid method.'
-    # Change this to subprocess.run() if we agree on Python 3.6
+
+"""
+    Endpoint to create a new SAT instance. Returns an id that can be used to get
+    data on that instance including its feasibility and solution if/when it has
+    been solved.
+"""
+@app.route('/v1/sat-solver/instance', methods=['POST'])
+def create_new_instance():
+    print(request.method)
+    if request.method == 'POST':
+        body = json.loads(request.data.decode('utf-8'))
+        if 'fileContents' in body:
+            file_id = str(uuid.uuid4())
+            file_name = CONSTANTS['TMP_FILE_NAME'] + file_id + '.cnf'
+            # TODO:  Add the element to a database + start running in a seperate thread.
+    return 'Invalid method.'
+
 
 @app.route('/website', methods=['GET'])
-def hello(name=None):
+def load_website(name=None):
     return render_template('index.html', name=name)
 
 

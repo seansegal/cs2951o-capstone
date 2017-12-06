@@ -141,7 +141,7 @@
       console.log(typeof(fr.result))
       $.ajax({
         type: 'POST',
-        url: '/v1/sat-solver/instance',
+        url: '/v1/sat-solver/solve',
         data: JSON.stringify({
           fileContents: fr.result
         }),
