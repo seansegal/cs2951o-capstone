@@ -46,11 +46,11 @@ def sat_solver():
         if 'fileContents' in body:
             fileContents = body['fileContents']
             file_name = CONSTANTS['TMP_FILE_NAME'] + str(random.randint(0, 1000)) + '.cnf'
-            with open('../solvers/sat-solver/solver1/input/' + file_name, 'w') as f:
+            with open('../solvers/sat-solver/s1/input/' + file_name, 'w') as f:
                 f.write(fileContents)
                 f.flush()
                 try:
-                    output = subprocess.check_output(['./run.sh', 'input/' + file_name], cwd='../solvers/sat-solver/solver1/')
+                    output = subprocess.check_output(['./run.sh', 'input/' + file_name], cwd='../solvers/sat-solver/s1/')
                     return jsonify({'results': output.decode('utf-8')})
                 except Exception as e:
                     print(e)
