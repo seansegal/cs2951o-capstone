@@ -85,5 +85,9 @@ def load_website(name=None):
     return render_template('index.html', name=name)
 
 
+def solve_instance(filename):
+
+
+
 if __name__ == '__main__':
     app.run(debug=True, threaded=CONSTANTS['THREADED'])
