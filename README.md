@@ -9,11 +9,16 @@ SAT instances (in CNF format) and a solver with attempt to solve the instances.
 ## Solvers
 
 ### Approaches
-TODO: list of solvers here and their approaches
+* DPLL
+* WalkSAT
 
 ### Constraints
-TODO: Put estimation of number of variables we can handle.
+DPLL is a complete search while WalkSAT is incomplete. Therefore, WalkSAT should
+only be used on satisfiable instances.
 
+<!-- TODO: Real numbers here -->
+DPLL has been run on instances with x variables and x constraints.
+WalkSAT has been run on instances with x variables and x constraints. 
 
 ## API Documentation
 
