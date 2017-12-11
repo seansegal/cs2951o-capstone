@@ -20,7 +20,12 @@ CONSTANTS = {
     'TMP_FILE_NAME': 'tmp_file'
 }
 
-def solve_instance(file_id):
+SOLVERS = {
+    'dpll': 's1',
+    'loc-sat': 's2',
+}
+
+def solve_instance(file_id, solver_path):
     file_name = file_id + '.cnf'
     with  open('../data/info/'+ file_id + '.json', 'r+') as f:
         info = json.load(f)
@@ -30,9 +35,9 @@ def solve_instance(file_id):
         f.truncate()
         f.flush()
         try:
-            output = subprocess.check_output(['./run.sh', 'input/' + file_name], cwd='../solvers/sat-solver/s1/')
+            output = subprocess.check_output(['./run.sh', 'input/' + file_name], cwd='../solvers/sat-solver/'+ solver_path +'/')
             info['status'] = 'solved'
-            info['result'] = output.decode('utf-8')
+            info['result'] = parse_last_line(output.decode('utf-8'))
         except Exception as e:
             info['status'] = 'error'
             info['errorMessage'] = str(e)
@@ -63,6 +68,12 @@ def _create_cnf_file_from_json(jsonCNF):
 def health():
     return jsonify({'success': True})
 
+"""
+    Solvers endpoint. Returns JSON listing the names of the solvers.
+"""
+@app.route('/v1/solvers', methods=['GET'])
+def solvers():
+    return jsonify({'success': True, 'names': ['dpll', 'loc-sat']})
 
 """
     Endpoint which solves a SAT instance synchronously. In other words, this post
@@ -95,21 +106,34 @@ def solve_sat():
     data on that instance including its feasibility and solution if/when it has
     been solved.
 """
-@app.route('/v1/sat-solver/instance', methods=['POST'])
+@app.route('/v1/sat-solver/instance', methods=['GET','POST'])
 def create_new_instance():
+    if request.method == 'GET':
+        file_id = request.args.get('fileId')
+        try:
+            with open('../data/info/'+ file_id + '.json', 'r') as f:
+                return jsonify(json.loads(f.read()))
+        except Exception as e:
+            return jsonify({'error': 'fileId {} does not exist.'.format(file_id)})
+
     if request.method == 'POST':
         body = json.loads(request.data.decode('utf-8'))
         if 'fileContents' in body:
+            file_name = body.get('fileName', '')
             fileContents = body['fileContents']
-            file_id = hashlib.sha256(fileContents.encode('UTF-8')).hexdigest()
+            solver_name = body.get('solverName', 'dpll')
+            solver_path = SOLVERS[solver_name]
+            file_id = hashlib.sha256((file_name + fileContents).encode('UTF-8')).hexdigest()
             my_file = Path("/path/to/file")
-            info_file = open('../data/info/'+ file_id + '.json','w')
-            original_file = open('../solvers/sat-solver/s1/input/'+ file_id + '.cnf','w')
+            info_file = open('../data/info/'+ file_id + '.json', 'w')
+            original_file = open('../solvers/sat-solver/' + solver_path + '/input/'+ file_id + '.cnf','w')
             file_info =  {
+                'file_name:': file_name,
                 'pid' : 'N/A',
                 'status': 'processing',
                 'time_created': datetime.datetime.utcnow().strftime("%a %b %d %H:%M:%S %Z %Y"),
                 'result': 'N/A',
+                'solver': solver_name,
             }
             info_file.write(json.dumps(file_info))
             original_file.write(fileContents)
@@ -119,7 +143,7 @@ def create_new_instance():
             original_file.close()
 
             # Start a worker process with this file.
-            worker = Process(target=solve_instance, args=(file_id,))
+            worker = Process(target=solve_instance, args=(file_id,solver_path))
             worker.start()
             workers.append(worker)
             return jsonify({'fileId': file_id})
@@ -128,7 +152,6 @@ def create_new_instance():
 def parse_last_line(last_line):
     line_chunks = last_line.split(': ')
     parsed_line = {}
-    parsed_line['instance'] = line_chunks[1][:-9]
     parsed_line['time'] = line_chunks[2][:-7]
     if line_chunks[3].startswith('UNSAT'):
         parsed_line['result'] = 'UNSAT'
@@ -136,10 +159,10 @@ def parse_last_line(last_line):
         parsed_line['result'] = 'SAT'
         solution = line_chunks[3][4:-1].split(' ')
         var_assignments = {}
-        for i in range(0,len(solution),2):
+        for i in range(0, len(solution), 2):
             var_assignments[i] = True if solution[i+1] == 'true' else False
         parsed_line['solution'] = var_assignments
-    return json.dumps(parsed_line)
+    return parsed_line
 
 @app.route('/website', methods=['GET'])
 def load_website(name=None):
