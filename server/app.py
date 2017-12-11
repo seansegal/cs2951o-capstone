@@ -125,6 +125,21 @@ def create_new_instance():
             return jsonify({'fileId': file_id})
     return jsonify({'error': 'Invalid method.'})
 
+def parse_last_line(last_line):
+    line_chunks = last_line.split(': ')
+    parsed_line = {}
+    parsed_line['instance'] = line_chunks[1][:-9]
+    parsed_line['time'] = line_chunks[2][:-7]
+    if line_chunks[3].startswith('UNSAT'):
+        parsed_line['result'] = 'UNSAT'
+    else:
+        parsed_line['result'] = 'SAT'
+        solution = line_chunks[3][4:-1].split(' ')
+        var_assignments = {}
+        for i in range(0,len(solution),2):
+            var_assignments[i] = True if solution[i+1] == 'true' else False
+        parsed_line['solution'] = var_assignments
+    return json.dumps(parsed_line)
 
 @app.route('/website', methods=['GET'])
 def load_website(name=None):
