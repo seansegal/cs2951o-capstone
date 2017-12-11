@@ -85,7 +85,7 @@ def solve_sat():
                 except Exception as e:
                     print(e)
         else:
-            return 'Invalid JSON: Missing fileContents field'
+            return jsonify({'error': 'Invalid JSON: Missing fileContents field'})
         return jsonify({'success': True})
 
     return jsonify({'error': 'Invalid method.'})
