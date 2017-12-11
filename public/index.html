@@ -1,195 +1,82 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Welcome to Firebase Hosting</title>
-
-  <!-- update the version number as needed -->
-  <script defer src="/__/firebase/4.6.2/firebase-app.js"></script>
-  <!-- include only the Firebase features as you need -->
-  <script defer src="/__/firebase/4.6.2/firebase-auth.js"></script>
-  <script defer src="/__/firebase/4.6.2/firebase-database.js"></script>
-  <script defer src="/__/firebase/4.6.2/firebase-messaging.js"></script>
-  <script defer src="/__/firebase/4.6.2/firebase-storage.js"></script>
-  <!-- initialize the SDK after all desired features are loaded -->
-  <script defer src="/__/firebase/init.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to SAT Solver Web Service</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 
 
-  <style media="screen">
-    body {
-      background: #ECEFF1;
-      color: rgba(0, 0, 0, 0.87);
-      font-family: Roboto, Helvetica, Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    #message {
-      background: white;
-      max-width: 360px;
-      margin: 100px auto 16px;
-      padding: 32px 24px;
-      border-radius: 3px;
-    }
-
-    #message h2 {
-      color: #ffa100;
-      font-weight: bold;
-      font-size: 16px;
-      margin: 0 0 8px;
-    }
-
-    #message h1 {
-      font-size: 22px;
-      font-weight: 300;
-      color: rgba(0, 0, 0, 0.6);
-      margin: 0 0 16px;
-    }
-
-    #message p {
-      line-height: 140%;
-      margin: 16px 0 24px;
-      font-size: 14px;
-    }
-
-    #message a {
-      display: block;
-      text-align: center;
-      background: #039be5;
-      text-transform: uppercase;
-      text-decoration: none;
-      color: white;
-      padding: 16px;
-      border-radius: 4px;
-    }
-
-    #message,
-    #message a {
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    }
-
-    #load {
-      color: rgba(0, 0, 0, 0.4);
-      text-align: center;
-      font-size: 13px;
-    }
-
-    @media (max-width: 600px) {
-      body,
-      #message {
-        margin-top: 0;
-        background: white;
-        box-shadow: none;
+    <style media="screen">
+      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
+      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
+      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
+      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
+      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
+      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
+      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
+      @media (max-width: 600px) {
+        body, #message { margin-top: 0; background: white; box-shadow: none; }
+        body { border-top: 16px solid #ffa100; }
       }
-      body {
-        border-top: 16px solid #ffa100;
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <div id="message">
-    <h2>Welcome to Prescriptive Analytics Capstone</h2>
-    <h1>Use SAT Solvers!</h1>
-    <p>by Sean Segal, Ansel Vahle, Valentin Perez</p>
-
-  </div>
-  <p id="load">Firebase SDK Loading&hellip;</p>
-
-  <!-- <form enctype="multipart/form-data">
+    </style>
+  </head>
+  <body>
+    <div id="message">
+      <h2>Welcome to Prescriptive Analytics Capstone</h2>
+      <h1>Get results to SAT problems!</h1>
+      <p>by Sean Segal, Ansel Vahle, Valentin Perez</p>
+    </div>
+    <!-- <form enctype="multipart/form-data">
     <input id="upload" type=file   accept="text/html" name="files[]" size=30>
     </form> -->
 
-  <input type="file" id="fileinput" />
-  <input type='button' id='btnLoad' value='Load' onclick='handleFileSelect();'>
-  <div id="editor"></div>
+    <input type="file" id="fileinput"/>
+    <input type='button' id='btnLoad' value='Load' onclick='handleFileSelect();'>
+    <div id="editor"></div>
 
+    <script>
+      function handleFileSelect()
+      {
+        if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+          alert('The File APIs are not fully supported in this browser.');
+          return;
+        }
 
-
-  <script>
-    function handleFileSelect() {
-      if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
-        alert('The File APIs are not fully supported in this browser.');
-        return;
+        input = document.getElementById('fileinput');
+        if (!input) {
+          alert("Um, couldn't find the fileinput element.");
+        }
+        else if (!input.files) {
+          alert("This browser doesn't seem to support the `files` property of file inputs.");
+        }
+        else if (!input.files[0]) {
+          alert("Please select a file before clicking 'Load'");
+        }
+        else {
+          file = input.files[0];
+          fr = new FileReader();
+          fr.onload = makePostRequest;
+          fr.readAsText(file);
+          console.log("hawt ", fr.result);
+          //makePostRequest();
+          //fr.readAsDataURL(file);
+        }
       }
 
-      input = document.getElementById('fileinput');
-      if (!input) {
-        alert("Um, couldn't find the fileinput element.");
-      } else if (!input.files) {
-        alert("This browser doesn't seem to support the `files` property of file inputs.");
-      } else if (!input.files[0]) {
-        alert("Please select a file before clicking 'Load'");
-      } else {
-        file = input.files[0];
-        fr = new FileReader();
-        fr.onload = makePostRequest;
-        fr.readAsText(file);
-        console.log("hawt ", fr.result);
-        //makePostRequest();
-        //fr.readAsDataURL(file);
-      }
-    }
-
-    function makePostRequest() {
-      console.log("doing post request, with text: ", fr.result);
-      console.log(fr.result);
-      console.log(typeof(fr.result))
-      // $.ajax({
-      //   type: 'POST',
-      //   url: '/v1/sat-solver/instance',
-      //   data: 's',
-      //   success: function(data) {
-      //     console.log('Request completed!')
-      //     alert('data: ' + data);
-      //   },
-      //   error: function(err) {
-      //     console.log(err)
-      //   },
-      //   contentType: "application/json",
-      //   dataType: 'json',
-      // });
-      $.post("/v1/health", {
-          fileContents: 'fdjsak',
-          time: "2pm"
-        })
-        .done(function(data) {
-          alert("Data Loaded: " + data);
+      function makePostRequest() {
+        console.log("doing post request, with text: ", fr.result);
+        console.log(fr.result);
+        $.post( "http://127.0.0.1:5000/v1/sat-solver/instance", { fileContents: fr.result, time: "2pm" })
+        .done(function( data ) {
+          alert( "Data Loaded: " + data );
         });
-
-    }
-
-
-    function receivedText() {
-      document.getElementById('editor').appendChild(document.createTextNode(fr.result));
-    }
-  </script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-      // // The Firebase SDK is initialized and available here!
-      //
-      // firebase.auth().onAuthStateChanged(user => { });
-      // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-      // firebase.messaging().requestPermission().then(() => { });
-      // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-      //
-      // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
-      try {
-        let app = firebase.app();
-        let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
-        document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
-      } catch (e) {
-        console.error(e);
-        document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
       }
-    });
-  </script>
-</body>
 
+      function receivedText() {
+        document.getElementById('editor').appendChild(document.createTextNode(fr.result));
+      }
+    </script>
+  </body>
 </html>

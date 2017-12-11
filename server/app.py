@@ -21,7 +21,6 @@ CONSTANTS = {
 }
 
 def solve_instance(file_id):
-    print('HERE')
     file_name = file_id + '.cnf'
     with  open('../data/info/'+ file_id + '.json', 'r+') as f:
         info = json.load(f)
@@ -98,7 +97,6 @@ def solve_sat():
 """
 @app.route('/v1/sat-solver/instance', methods=['POST'])
 def create_new_instance():
-    print(request.method)
     if request.method == 'POST':
         body = json.loads(request.data.decode('utf-8'))
         if 'fileContents' in body:

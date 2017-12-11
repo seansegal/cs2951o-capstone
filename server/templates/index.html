@@ -4,18 +4,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Welcome to Firebase Hosting</title>
-
-  <!-- update the version number as needed -->
-  <script defer src="/__/firebase/4.6.2/firebase-app.js"></script>
-  <!-- include only the Firebase features as you need -->
-  <script defer src="/__/firebase/4.6.2/firebase-auth.js"></script>
-  <script defer src="/__/firebase/4.6.2/firebase-database.js"></script>
-  <script defer src="/__/firebase/4.6.2/firebase-messaging.js"></script>
-  <script defer src="/__/firebase/4.6.2/firebase-storage.js"></script>
-  <!-- initialize the SDK after all desired features are loaded -->
-  <script defer src="/__/firebase/init.js"></script>
+  <title>Welcome to SAT Solver Web Service</title>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 
 
   <style media="screen">
@@ -29,8 +20,8 @@
 
     #message {
       background: white;
-      max-width: 360px;
-      margin: 100px auto 16px;
+      max-width: 500px;
+      margin: 20px auto 16px;
       padding: 32px 24px;
       border-radius: 3px;
     }
@@ -94,46 +85,80 @@
 <body>
   <div id="message">
     <h2>Welcome to Prescriptive Analytics Capstone</h2>
-    <h1>Use SAT Solvers!</h1>
+    <h1>Get results to SAT problems!</h1>
     <p>by Sean Segal, Ansel Vahle, Valentin Perez</p>
-
   </div>
-  <p id="load">Firebase SDK Loading&hellip;</p>
-
   <!-- <form enctype="multipart/form-data">
     <input id="upload" type=file   accept="text/html" name="files[]" size=30>
     </form> -->
+  <div id="message">
+    <h1>Upload .cnf file of SAT problem you wish to solve.</h2>
+      <input type="file" id="fileinput"/>
+      <input type='button' id='btnLoad' value='Load' onclick='handleFileSelect();'>
+      <div id="editor"></div>
+    </div>
 
-  <input type="file" id="fileinput" />
-  <input type='button' id='btnLoad' value='Load' onclick='handleFileSelect();'>
-  <div id="editor"></div>
+    <div id="message">
+      <h2>Results</h2>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Instance</th>
+            <th scope="col">Time in seconds</th>
+            <th scope="col">Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">1</th>
+            <td>2.33</td>
+            <td>SAT</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>1.02</td>
+            <td>UNSAT</td>
+          </tr>
+          <tr>
+            <th scope="row">3</th>
+            <td>3.04</td>
+            <td>UNSAT</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
 
+    <script>
+      function handleFileSelect()
+      {
+        if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+          alert('The File APIs are not fully supported in this browser.');
+          return;
+        }
 
-  <script>
-    function handleFileSelect() {
-      if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
-        alert('The File APIs are not fully supported in this browser.');
-        return;
+        input = document.getElementById('fileinput');
+        if (!input) {
+          alert("Um, couldn't find the fileinput element.");
+        }
+        else if (!input.files) {
+          alert("This browser doesn't seem to support the `files` property of file inputs.");
+        }
+        else if (!input.files[0]) {
+          alert("Please select a file before clicking 'Load'");
+        }
+        else {
+          file = input.files[0];
+          fr = new FileReader();
+          fr.onload = makePostRequest;
+          fr.readAsText(file);
+          console.log("hawt ", fr.result);
+          //makePostRequest();
+          //fr.readAsDataURL(file);
+        }
       }
 
-      input = document.getElementById('fileinput');
-      if (!input) {
-        alert("Um, couldn't find the fileinput element.");
-      } else if (!input.files) {
-        alert("This browser doesn't seem to support the `files` property of file inputs.");
-      } else if (!input.files[0]) {
-        alert("Please select a file before clicking 'Load'");
-      } else {
-        file = input.files[0];
-        fr = new FileReader();
-        fr.onload = makePostRequest;
-        fr.readAsText(file);
-        console.log("hawt ", fr.result);
-        //makePostRequest();
-        //fr.readAsDataURL(file);
-      }
-    }
 
     function makePostRequest() {
       console.log("doing post request, with text: ", fr.result);
@@ -173,28 +198,5 @@
       document.getElementById('editor').appendChild(document.createTextNode(fr.result));
     }
   </script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-      // // The Firebase SDK is initialized and available here!
-      //
-      // firebase.auth().onAuthStateChanged(user => { });
-      // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-      // firebase.messaging().requestPermission().then(() => { });
-      // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-      //
-      // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
-      try {
-        let app = firebase.app();
-        let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
-        document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
-      } catch (e) {
-        console.error(e);
-        document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
-      }
-    });
-  </script>
-</body>
-
+  </body>
 </html>
