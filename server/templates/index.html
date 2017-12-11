@@ -159,7 +159,6 @@
         }
       }
 
-
     function makePostRequest(fileName) {
       return function() {
         console.log("this is ");
@@ -180,8 +179,11 @@
             var cell3 = row.insertCell(2);
 
             cell1.innerHTML = fileName; //data.fileId;
-            cell2.innerHTML = "NEW CELL1";
-            cell3.innerHTML = "NEW CELL3";
+            cell2.innerHTML = "solving...";
+            cell3.innerHTML = "solving...";
+
+            var fileId = data.fileId;
+            
             console.log(data);
           },
           error: function(request, status, errThrown) {
@@ -194,7 +196,6 @@
         });
       }
     }
-
 
     function receivedText() {
       document.getElementById('editor').appendChild(document.createTextNode(fr.result));
