@@ -4,6 +4,7 @@ import subprocess
 import datetime
 import hashlib
 import random
+from pathlib import Path
 from flask_cors import CORS, cross_origin
 import json
 import os
@@ -22,20 +23,24 @@ CONSTANTS = {
 def solve_instance(file_id):
     print('HERE')
     file_name = file_id + '.cnf'
-    with  open('../data/info/'+ file_id + '.json', 'w') as f:
+    with  open('../data/info/'+ file_id + '.json', 'r+') as f:
         info = json.load(f)
         info['status'] = 'running'
+        f.seek(0)
         f.write(json.dumps(info))
+        f.truncate()
         f.flush()
         try:
             output = subprocess.check_output(['./run.sh', 'input/' + file_name], cwd='../solvers/sat-solver/s1/')
             info['status'] = 'solved'
-            info['result'] = output
+            info['result'] = output.decode('utf-8')
         except Exception as e:
             info['status'] = 'error'
             info['errorMessage'] = str(e)
         finally:
+            f.seek(0)
             f.write(json.dumps(info))
+            f.truncate()
             f.flush()
             f.close()
 
@@ -84,7 +89,7 @@ def solve_sat():
             return 'Invalid JSON: Missing fileContents field'
         return jsonify({'success': True})
 
-    return 'Invalid method.'
+    return jsonify({'error': 'Invalid method.'})
 
 """
     Endpoint to create a new SAT instance. Returns an id that can be used to get
@@ -98,8 +103,8 @@ def create_new_instance():
         body = json.loads(request.data.decode('utf-8'))
         if 'fileContents' in body:
             fileContents = body['fileContents']
-
             file_id = hashlib.sha256(fileContents.encode('UTF-8')).hexdigest()
+            my_file = Path("/path/to/file")
             info_file = open('../data/info/'+ file_id + '.json','w')
             original_file = open('../solvers/sat-solver/s1/input/'+ file_id + '.cnf','w')
             file_info =  {
@@ -116,10 +121,11 @@ def create_new_instance():
             original_file.close()
 
             # Start a worker process with this file.
-            worker = Process(target=solve_instance, args=file_id)
+            worker = Process(target=solve_instance, args=(file_id,))
             worker.start()
             workers.append(worker)
-    return 'Invalid method.'
+            return jsonify({'fileId': file_id})
+    return jsonify({'error': 'Invalid method.'})
 
 
 @app.route('/website', methods=['GET'])
