@@ -25,6 +25,8 @@ SOLVERS = {
     'walk-sat': 's2',
 }
 
+DEFAULT_SOLVER = 'walk-sat'
+
 def solve_instance(file_id, solver_path):
     file_name = file_id + '.cnf'
     with  open('../data/info/'+ file_id + '.json', 'r+') as f:
@@ -106,8 +108,9 @@ def solve_sat():
     data on that instance including its feasibility and solution if/when it has
     been solved.
 """
-@app.route('/v1/sat-solver/instance', methods=['GET','POST'])
-def create_new_instance():
+@app.route('/v1/sat-solver/instance', methods=['GET', 'POST'])
+def instance():
+    # Get information on a created instance.
     if request.method == 'GET':
         file_id = request.args.get('fileId')
         try:
@@ -116,15 +119,15 @@ def create_new_instance():
         except Exception as e:
             return jsonify({'error': 'fileId {} does not exist.'.format(file_id)})
 
+    # Upload an instance to be solved asynchronously
     if request.method == 'POST':
         body = json.loads(request.data.decode('utf-8'))
         if 'fileContents' in body:
             file_name = body.get('fileName', '')
+            solver_name = body.get('solverName', DEFAULT_SOLVER)
             fileContents = body['fileContents']
-            solver_name = body.get('solverName', 'dpll')
             solver_path = SOLVERS[solver_name]
             file_id = hashlib.sha256((file_name + fileContents).encode('UTF-8')).hexdigest()
-            my_file = Path("/path/to/file")
             info_file = open('../data/info/'+ file_id + '.json', 'w')
             original_file = open('../solvers/sat-solver/' + solver_path + '/input/'+ file_id + '.cnf','w')
             file_info =  {

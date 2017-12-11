@@ -13,7 +13,7 @@ fi
 input=$1
 
 # Update this file with instructions on how to run your code given an input
-python src/walk_sat.py $input
+/usr/bin/python src/walk_sat.py $input
 
 # To run our Walksat Solver, uncomment:
 #python src/dpll.py $input
