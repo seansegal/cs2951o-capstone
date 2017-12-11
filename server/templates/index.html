@@ -92,9 +92,15 @@
     <input id="upload" type=file   accept="text/html" name="files[]" size=30>
     </form> -->
   <div id="message">
-    <h1>Upload .cnf file of SAT problem you wish to solve.</h2>
+    <h1>Upload a .cnf file of SAT problem you wish to solve.</h2>
       <input type="file" id="fileinput"/>
-      <input type='button' id='btnLoad' value='Load' onclick='handleFileSelect();'>
+      <br>
+      <select name='solver-type'>
+        <option value="dpll" selected>DPLL</option>
+        <option value="walk-sat">Walk SAT</option>
+      </select>
+      <br>
+      <input type='button' id='btnLoad' value='Solve!' onclick='handleFileSelect();'>
       <div id="editor"></div>
     </div>
 
@@ -113,7 +119,7 @@
           <tr>
             <th scope="row">1</th>
             <td>2.33</td>
-            <td>SAT</td>
+            <td><button type="button" class="btn btn-light">Light</button></td>
           </tr>
           <tr>
             <th scope="row">2</th>
