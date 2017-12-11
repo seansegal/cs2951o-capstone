@@ -118,18 +118,13 @@
         <tbody>
           <tr>
             <th scope="row">1</th>
-            <td>2.33</td>
-            <td><button type="button" class="btn btn-light">Light</button></td>
+            <td>SAT</td>
+            <td><button type="button" class="btn btn-secondary">View Solution</button></td>
           </tr>
           <tr>
             <th scope="row">2</th>
             <td>1.02</td>
-            <td>UNSAT</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td>3.04</td>
-            <td>UNSAT</td>
+            <td><button type="button" class="btn btn-secondary">Update</button></td>
           </tr>
         </tbody>
       </table>
@@ -165,6 +160,38 @@
         }
       }
 
+    function refreshStatus() {
+      console.log("refersadasfasfasd");
+      return function() {
+        // make get request for this fileID
+        console.log("refreshing status for ");
+        //console.log(fileId);
+        var fileId = "sdfs";
+        var req_url = '/v1/sat-solver/instance?fileId=' + fileId;
+        $.ajax({
+          type: 'GET',
+          url: req_url,
+          success: function(data) {
+            console.log('REFRESH request completed!');
+            console.log(data)
+            var table = document.getElementById("resultsTable");
+            cell1.innerHTML = fileName;
+            cell2.innerHTML = "solving...";
+            // cell3.innerHTML = "<button id=\" " + "btn-"+ fileName + " \" type=\"button\" class=\"btn btn-secondary\">View Solution</button>";
+            // document.getElementById("btn-" + fileName).onclick = doFunction;
+
+          },
+          error: function(request, status, errThrown) {
+            console.log('ERROR!');
+            console.log(status);
+            console.log(errThrown);
+          },
+          contentType: "application/json",
+          dataType: 'json',
+        });
+      }
+    }
+
     function makePostRequest(fileName) {
       return function() {
         console.log("this is ");
@@ -186,11 +213,8 @@
 
             cell1.innerHTML = fileName; //data.fileId;
             cell2.innerHTML = "solving...";
-            cell3.innerHTML = "solving...";
-
-            var fileId = data.fileId;
-
-            console.log(data);
+            cell3.innerHTML = "<button onclick=\"refreshStatus\" id=\" " + "btn-"+ fileName + " \" type=\"button\" class=\"btn btn-secondary\">Refresho</button>";
+            //document.getElementById("btn-" + fileName).onclick = refreshStatus(data.fileId);
           },
           error: function(request, status, errThrown) {
             console.log('ERROR!');
