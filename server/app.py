@@ -22,7 +22,7 @@ CONSTANTS = {
 
 SOLVERS = {
     'dpll': 's1',
-    'loc-sat': 's2',
+    'walk-sat': 's2',
 }
 
 def solve_instance(file_id, solver_path):
@@ -73,7 +73,7 @@ def health():
 """
 @app.route('/v1/solvers', methods=['GET'])
 def solvers():
-    return jsonify({'success': True, 'names': ['dpll', 'loc-sat']})
+    return jsonify({'success': True, 'names': ['dpll', 'walk-sat']})
 
 """
     Endpoint which solves a SAT instance synchronously. In other words, this post
