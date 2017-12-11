@@ -3,17 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
-
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/4.6.2/firebase-app.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/4.6.2/firebase-auth.js"></script>
-    <script defer src="/__/firebase/4.6.2/firebase-database.js"></script>
-    <script defer src="/__/firebase/4.6.2/firebase-messaging.js"></script>
-    <script defer src="/__/firebase/4.6.2/firebase-storage.js"></script>
-    <!-- initialize the SDK after all desired features are loaded -->
-    <script defer src="/__/firebase/init.js"></script>
+    <title>Welcome to SAT Solver Web Service</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 
 
@@ -35,29 +25,24 @@
   <body>
     <div id="message">
       <h2>Welcome to Prescriptive Analytics Capstone</h2>
-      <h1>Use SAT Solvers!</h1>
+      <h1>Get results to SAT problems!</h1>
       <p>by Sean Segal, Ansel Vahle, Valentin Perez</p>
-
     </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
-    
     <!-- <form enctype="multipart/form-data">
     <input id="upload" type=file   accept="text/html" name="files[]" size=30>
     </form> -->
-    
+
     <input type="file" id="fileinput"/>
     <input type='button' id='btnLoad' value='Load' onclick='handleFileSelect();'>
     <div id="editor"></div>
-    
-    
-    
-    <script>        
+
+    <script>
       function handleFileSelect()
-      {               
+      {
         if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
           alert('The File APIs are not fully supported in this browser.');
           return;
-        }   
+        }
 
         input = document.getElementById('fileinput');
         if (!input) {
@@ -67,7 +52,7 @@
           alert("This browser doesn't seem to support the `files` property of file inputs.");
         }
         else if (!input.files[0]) {
-          alert("Please select a file before clicking 'Load'");               
+          alert("Please select a file before clicking 'Load'");
         }
         else {
           file = input.files[0];
@@ -79,7 +64,7 @@
           //fr.readAsDataURL(file);
         }
       }
-      
+
       function makePostRequest() {
         console.log("doing post request, with text: ", fr.result);
         console.log(fr.result);
@@ -87,35 +72,11 @@
         .done(function( data ) {
           alert( "Data Loaded: " + data );
         });
-        
       }
-    
 
       function receivedText() {
         document.getElementById('editor').appendChild(document.createTextNode(fr.result));
-      }           
-    </script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
-        try {
-          let app = firebase.app();
-          let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
-          document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
-        }
-      });
+      }
     </script>
   </body>
 </html>
