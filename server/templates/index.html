@@ -101,7 +101,7 @@
     <div id="message">
       <h2>Results</h2>
 
-      <table class="table">
+      <table class="table" id="resultsTable">
         <thead>
           <tr>
             <th scope="col">Instance</th>
@@ -151,46 +151,48 @@
         else {
           file = input.files[0];
           fr = new FileReader();
-          fr.onload = makePostRequest;
+          fr.onload = makePostRequest(file.name);
           fr.readAsText(file);
-          console.log("hawt ", fr.result);
+          console.log("hawt ", file.name);
           //makePostRequest();
           //fr.readAsDataURL(file);
         }
       }
 
 
-    function makePostRequest() {
-      console.log("doing post request, with text: ", fr.result);
-      console.log(fr.result);
-      console.log(typeof(fr.result))
-      $.ajax({
-        type: 'POST',
-        url: '/v1/sat-solver/instance',
-        data: JSON.stringify({
-          fileContents: fr.result
-        }),
-        success: function(data) {
-          console.log('Request completed!');
-          console.log(data);
-        },
-        error: function(request, status, errThrown) {
-          console.log('ERROR!');
-          console.log(status);
-          console.log(errThrown);
-        },
-        contentType: "application/json",
-        dataType: 'json',
-      });
+    function makePostRequest(fileName) {
+      return function() {
+        console.log("this is ");
+        console.log(fileName);
+        $.ajax({
+          type: 'POST',
+          url: '/v1/sat-solver/instance',
+          data: JSON.stringify({
+            fileContents: fr.result,
+            fileName: fileName
+          }),
+          success: function(data) {
+            console.log('Request completed!');
+            var table = document.getElementById("resultsTable");
+            var row = table.insertRow(1);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
 
-      // $.post("/v1/health", {
-      //     fileContents: 'fdjsak',
-      //     time: "2pm"
-      //   })
-      //   .done(function(data) {
-      //     alert("Data Loaded: " + data);
-      //   });
-
+            cell1.innerHTML = fileName; //data.fileId;
+            cell2.innerHTML = "NEW CELL1";
+            cell3.innerHTML = "NEW CELL3";
+            console.log(data);
+          },
+          error: function(request, status, errThrown) {
+            console.log('ERROR!');
+            console.log(status);
+            console.log(errThrown);
+          },
+          contentType: "application/json",
+          dataType: 'json',
+        });
+      }
     }
 
 
