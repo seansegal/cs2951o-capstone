@@ -176,11 +176,12 @@ def instance():
             worker = Process(target=solve_instance, args=(file_id,solver_path))
             worker.start()
             workers.append(worker)
-            return jsonify({'fileId': file_id})
+            return jsonify({'fileId': file_id, 'solver': solver_name})
     return jsonify({'error': 'Invalid method.'})
 
 def parse_last_line(last_line):
     line_chunks = last_line.split(': ')
+    print(line_chunks)
     parsed_line = {}
     parsed_line['time'] = line_chunks[2][:-7]
     if line_chunks[3].startswith('UNSAT'):
