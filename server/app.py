@@ -65,7 +65,7 @@ def _create_cnf_file_from_json():
         file_name = body.get('fileName', '')
         solver_name = body.get('solverName', DEFAULT_SOLVER)
         solver_path = SOLVERS[solver_name]
-        file_id = hashlib.sha256((file_name + file_contents).encode('UTF-8')).hexdigest()
+        file_id = hashlib.sha256((file_name + + solver_name + file_contents).encode('UTF-8')).hexdigest()
         info_file = open('../data/info/'+ file_id + '.json', 'w')
         original_file = open('../solvers/sat-solver/' + solver_path + '/input/'+ file_id + '.cnf','w')
         file_info =  {
