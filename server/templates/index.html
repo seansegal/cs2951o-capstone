@@ -112,7 +112,7 @@
           <tr>
             <th scope="col">Instance</th>
             <th scope="col">Status</th>
-            <th scope="col">Updating</th>
+            <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -159,14 +159,15 @@
           //fr.readAsDataURL(file);
         }
       }
+    function refresh() {
+      console.log("WHATAGITU");
 
-    function refreshStatus() {
-      console.log("refersadasfasfasd");
+    }
+    function refreshStatus(fileId) {
       return function() {
         // make get request for this fileID
         console.log("refreshing status for ");
-        //console.log(fileId);
-        var fileId = "sdfs";
+        console.log(fileId);
         var req_url = '/v1/sat-solver/instance?fileId=' + fileId;
         $.ajax({
           type: 'GET',
@@ -211,9 +212,20 @@
             var cell2 = row.insertCell(1);
             var cell3 = row.insertCell(2);
 
+            console.log(data);
             cell1.innerHTML = fileName; //data.fileId;
             cell2.innerHTML = "solving...";
-            cell3.innerHTML = "<button onclick=\"refreshStatus\" id=\" " + "btn-"+ fileName + " \" type=\"button\" class=\"btn btn-secondary\">Refresho</button>";
+            //cell3.innerHTML = "<button onclick=\"refreshStatus\" id=\" " + "btn-"+ fileName + " \" type=\"button\" class=\"btn btn-secondary\">Refresho</button>";
+            var btn = document.createElement("BUTTON");        // Create a <button> element
+            var t = document.createTextNode("Update");       // Create a text node
+            btn.className = "btn btn-secondary";
+            btn.type = "button";
+            btn.appendChild(t);
+            console.log(data.fileId);
+            btn.onclick = refreshStatus(data.fileId);
+            cell3.appendChild(btn);
+            console.log("DOING THIS");
+
             //document.getElementById("btn-" + fileName).onclick = refreshStatus(data.fileId);
           },
           error: function(request, status, errThrown) {
