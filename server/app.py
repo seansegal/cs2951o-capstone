@@ -25,7 +25,7 @@ SOLVERS = {
     'walk-sat': 's2',
 }
 
-DEFAULT_SOLVER = 'walk-sat'
+DEFAULT_SOLVER = 'dpll'
 
 def solve_instance(file_id, solver_path):
     file_name = file_id + '.cnf'
