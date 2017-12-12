@@ -50,18 +50,45 @@ def solve_instance(file_id, solver_path):
             f.flush()
             f.close()
 
-# TODO: move to an external file.
-def _create_cnf_file_from_json(jsonCNF):
-    dictCNF = json.loads(jsonCNF)
-    if dictCNF['fileFormat'] != 'cnf':
-        raise ValueError('Only supported DIMACS file type is CNF')
-    cnf = ['p cnf ' + dictCNF['numVariables'] + ' ' + dictCNF['numClauses']]
-    cnf += dictCNF['clauses']
-    file_name = 'cnf_' + str(random.randint(0,999))
-    cnf_file  = open( file_name, 'w')
-    cnf_file.write('\n'.join(cnf))
-    cnf_file.close()
-    return
+
+@app.route('/v1/sat-solver/json/instance', methods=['POST'])
+def _create_cnf_file_from_json():
+
+    # Upload an instance to be solved asynchronously
+    if request.method == 'POST':
+        body = json.loads(request.data.decode('utf-8'))
+        if body.get('fileFormat', '') != 'cnf':
+            raise ValueError('Only supported DIMACS file type is CNF')
+        cnf = ['p cnf ' + body['numVariables'] + ' ' + body['numClauses']]
+        cnf += body['clauses']
+        file_contents = '\n'.join(cnf)
+        file_name = body.get('fileName', '')
+        solver_name = body.get('solverName', DEFAULT_SOLVER)
+        solver_path = SOLVERS[solver_name]
+        file_id = hashlib.sha256((file_name + + solver_name + file_contents).encode('UTF-8')).hexdigest()
+        info_file = open('../data/info/'+ file_id + '.json', 'w')
+        original_file = open('../solvers/sat-solver/' + solver_path + '/input/'+ file_id + '.cnf','w')
+        file_info =  {
+            'file_name:': file_name,
+            'pid' : 'N/A',
+            'status': 'processing',
+            'time_created': datetime.datetime.utcnow().strftime("%a %b %d %H:%M:%S %Z %Y"),
+            'result': 'N/A',
+            'solver': solver_name,
+        }
+        info_file.write(json.dumps(file_info))
+        original_file.write(file_contents)
+        info_file.flush()
+        original_file.flush()
+        info_file.close()
+        original_file.close()
+
+        # Start a worker process with this file.
+        worker = Process(target=solve_instance, args=(file_id,solver_path))
+        worker.start()
+        workers.append(worker)
+        return jsonify({'fileId': file_id})
+    return jsonify({'error': 'Invalid method.'})
 
 """
     Health endpoint. Returns JSON {success: true} if the API is up and running.
