@@ -5,7 +5,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Welcome to SAT Solver Web Service</title>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  <!--<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 
 
@@ -68,6 +72,10 @@
       font-size: 13px;
     }
 
+    #solutionModal {
+      padding:1em;
+    }
+
     @media (max-width: 600px) {
       body,
       #message {
@@ -116,20 +124,20 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>SAT</td>
-            <td><button type="button" class="btn btn-secondary">View Solution</button></td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>1.02</td>
-            <td><button type="button" class="btn btn-secondary">Update</button></td>
-          </tr>
         </tbody>
       </table>
     </div>
 
+
+    <!-- Large modal -->
+
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div id="solutionModal" class="modal-content" >
+          Heyy
+        </div>
+      </div>
+    </div>
 
     <script>
       function handleFileSelect()
@@ -159,10 +167,20 @@
           //fr.readAsDataURL(file);
         }
       }
-    function refresh() {
-      console.log("WHATAGITU");
 
+
+    function viewSolution(data) {
+      return function() {
+        console.log("Over here");
+        console.log(data.result.solution);
+        var solutionModal = document.getElementById("solutionModal");
+        solutionModal.innerHTML = data.result.solution;
+
+
+      }
     }
+
+
     function refreshStatus(fileId) {
       return function() {
         // make get request for this fileID
@@ -175,9 +193,37 @@
           success: function(data) {
             console.log('REFRESH request completed!');
             console.log(data)
-            var table = document.getElementById("resultsTable");
-            cell1.innerHTML = fileName;
-            cell2.innerHTML = "solving...";
+
+            var button = document.getElementById("button-" + fileId);
+
+            // if (button.innerHTML == "View Solution") {
+            //   console.log("HEREEEEEEEE");
+            //
+            // }
+
+            if (data.status == "solved") {
+              var status = document.getElementById("status-" + fileId);
+              status.innerHTML = data.result.result
+              console.log(data.result.solution);
+
+              button.innerHTML = "View Solution";
+              var solutionHTML = "<h3>Solution</h3>\n";
+
+              var object = data.result.solution;
+              for (var key in object) {
+                if (object.hasOwnProperty(key)) {
+                  solutionHTML += " " + key + " : " + object[key] + "<br>";
+                }
+              }
+
+              $("#solutionModal").html(solutionHTML);
+              $("#button-" + fileId).attr("data-toggle", "modal");
+              $("#button-" + fileId).attr("data-target", ".bd-example-modal-lg");
+
+            } else {
+              alert("Still Solving!");
+            }
+
             // cell3.innerHTML = "<button id=\" " + "btn-"+ fileName + " \" type=\"button\" class=\"btn btn-secondary\">View Solution</button>";
             // document.getElementById("btn-" + fileName).onclick = doFunction;
 
@@ -215,16 +261,18 @@
             console.log(data);
             cell1.innerHTML = fileName; //data.fileId;
             cell2.innerHTML = "solving...";
+            cell2.id = "status-" + data.fileId;
+
             //cell3.innerHTML = "<button onclick=\"refreshStatus\" id=\" " + "btn-"+ fileName + " \" type=\"button\" class=\"btn btn-secondary\">Refresho</button>";
             var btn = document.createElement("BUTTON");        // Create a <button> element
             var t = document.createTextNode("Update");       // Create a text node
             btn.className = "btn btn-secondary";
             btn.type = "button";
             btn.appendChild(t);
+            btn.id = "button-" + data.fileId;
             console.log(data.fileId);
             btn.onclick = refreshStatus(data.fileId);
             cell3.appendChild(btn);
-            console.log("DOING THIS");
 
             //document.getElementById("btn-" + fileName).onclick = refreshStatus(data.fileId);
           },
