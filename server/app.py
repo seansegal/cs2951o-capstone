@@ -5,7 +5,6 @@ import datetime
 import hashlib
 import random
 from pathlib import Path
-from flask_cors import CORS, cross_origin
 import json
 import os
 import uuid
@@ -13,20 +12,25 @@ import uuid
 app = Flask(__name__)
 workers = []
 
-# TODO: Move to a config file (yaml?)
 CONSTANTS = {
     'THREADED': True,
     'MAX_PROCESSES': 10,
     'TMP_FILE_NAME': 'tmp_file'
 }
 
+# Dictionary from solver names to their directory names.
 SOLVERS = {
     'dpll': 's1',
     'walk-sat': 's2',
 }
 
+# This should correspond to a key in the SOLVERS dictionary.
 DEFAULT_SOLVER = 'dpll'
 
+"""
+Helper function which solves an instance. Run in it's own process on the server
+to solve a particular instance. TODO: Add a timeout argument.
+"""
 def solve_instance(file_id, solver_path):
     file_name = file_id + '.cnf'
     with  open('../data/info/'+ file_id + '.json', 'r+') as f:
@@ -37,7 +41,7 @@ def solve_instance(file_id, solver_path):
         f.truncate()
         f.flush()
         try:
-            output = subprocess.check_output(['./run.sh', 'input/' + file_name], cwd='../solvers/sat-solver/'+ solver_path +'/')
+            output = subprocess.check_output(['./run.sh', '../../../data/input-files/' + file_name], cwd='../solvers/sat-solver/'+ solver_path +'/')
             info['status'] = 'solved'
             info['result'] = parse_last_line(output.decode('utf-8'))
         except Exception as e:
@@ -102,7 +106,7 @@ def health():
 """
 @app.route('/v1/solvers', methods=['GET'])
 def solvers():
-    return jsonify({'success': True, 'names': ['dpll', 'walk-sat']})
+    return jsonify({'success': True, 'names': list(SOLVERS.keys())})
 
 """
     Endpoint which solves a SAT instance synchronously. In other words, this post
@@ -150,13 +154,16 @@ def instance():
     if request.method == 'POST':
         body = json.loads(request.data.decode('utf-8'))
         if 'fileContents' in body:
+            fileContents = body['fileContents']
+
+            # Optional parameters
             file_name = body.get('fileName', '')
             solver_name = body.get('solverName', DEFAULT_SOLVER)
-            fileContents = body['fileContents']
+
             solver_path = SOLVERS[solver_name]
             file_id = hashlib.sha256((file_name + fileContents).encode('UTF-8')).hexdigest()
             info_file = open('../data/info/'+ file_id + '.json', 'w')
-            original_file = open('../solvers/sat-solver/' + solver_path + '/input/'+ file_id + '.cnf','w')
+            original_file = open('../data/input-files/' + file_id + '.cnf','w')
             file_info =  {
                 'file_name:': file_name,
                 'pid' : 'N/A',
