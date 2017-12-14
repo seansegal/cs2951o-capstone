@@ -30,7 +30,7 @@ GET /solvers
 POST /sat-solver/json/instance
 
 ## Web Interface
-![picture of web interface](https://imgur.com/a/obezn)
+![picture of web interface](https://i.imgur.com/AhrrMCL.png)
 
 
 ## Important Documents
