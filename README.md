@@ -36,4 +36,6 @@ POST /sat-solver/json/instance
 ## Important Documents
 Status Document: https://docs.google.com/document/d/1iwjp_cvajgF5vbjZ7F5JsT6-0Ys5Kmd-07lRbdCvN60/
 
-## Future Improvements
+## Possible Future Improvements
+Solution File Download
+Including more types of solvers or solvers for other types of problems
