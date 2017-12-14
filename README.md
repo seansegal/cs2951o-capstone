@@ -23,9 +23,15 @@ WalkSAT has been run on instances with x variables and x constraints.
 ## API Documentation
 
 ### Endpoints
-TODO: Document API endpoints here
+POST /sat-solver/solve
+POST /sat-solver/instance
+GET /sat-solver/instance
+GET /solvers
+POST /sat-solver/json/instance
 
 ## Web Interface
+![picture of web interface](https://imgur.com/a/obezn)
+
 
 ## Important Documents
 Status Document: https://docs.google.com/document/d/1iwjp_cvajgF5vbjZ7F5JsT6-0Ys5Kmd-07lRbdCvN60/
