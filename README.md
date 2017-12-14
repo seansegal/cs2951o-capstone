@@ -23,11 +23,11 @@ WalkSAT has been run on instances with x variables and x constraints.
 ## API Documentation
 
 ### Endpoints
-POST /sat-solver/solve
-POST /sat-solver/instance
-GET /sat-solver/instance
-GET /solvers
-POST /sat-solver/json/instance
+* POST /sat-solver/solve 
+* POST /sat-solver/instance
+* GET /sat-solver/instance
+* GET /solvers
+* POST /sat-solver/json/instance
 
 ## Web Interface
 ![picture of web interface](https://i.imgur.com/AhrrMCL.png)
@@ -37,5 +37,6 @@ POST /sat-solver/json/instance
 Status Document: https://docs.google.com/document/d/1iwjp_cvajgF5vbjZ7F5JsT6-0Ys5Kmd-07lRbdCvN60/
 
 ## Possible Future Improvements
-Solution File Download
-Including more types of solvers or solvers for other types of problems
+* Solution File Download
+* Including more types of SAT solvers 
+* Including solvers for other types of problems
