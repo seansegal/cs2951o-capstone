@@ -20,8 +20,8 @@ CONSTANTS = {
 
 # Dictionary from solver names to their directory names.
 SOLVERS = {
-    'dpll': 's1',
-    'walk-sat': 's2',
+    'dpll': 'sat-solver/s1',
+    'walk-sat': 'sat-solver/s2',
 }
 
 # This should correspond to a key in the SOLVERS dictionary.
@@ -41,7 +41,7 @@ def solve_instance(file_id, solver_path):
         f.truncate()
         f.flush()
         try:
-            output = subprocess.check_output(['./run.sh', '../../../data/input-files/' + file_name], cwd='../solvers/sat-solver/'+ solver_path +'/')
+            output = subprocess.check_output(['./run.sh', '../../../data/input-files/' + file_name], cwd='../solvers/' + solver_path +'/')
             info['status'] = 'solved'
             info['result'] = parse_last_line(output.decode('utf-8'))
         except Exception as e:
@@ -71,7 +71,7 @@ def _create_cnf_file_from_json():
         solver_path = SOLVERS[solver_name]
         file_id = hashlib.sha256((file_name + + solver_name + file_contents).encode('UTF-8')).hexdigest()
         info_file = open('../data/info/'+ file_id + '.json', 'w')
-        original_file = open('../solvers/sat-solver/' + solver_path + '/input/'+ file_id + '.cnf','w')
+        original_file = open('../solvers/' + solver_path + '/input/'+ file_id + '.cnf','w')
         file_info =  {
             'file_name:': file_name,
             'pid' : 'N/A',
@@ -198,7 +198,7 @@ def parse_last_line(last_line):
         solution = line_chunks[3][4:-1].split(' ')
         var_assignments = {}
         for i in range(0, len(solution), 2):
-            var_assignments[i] = True if solution[i+1] == 'true' else False
+            var_assignments[solution[i]] = True if solution[i+1] == 'true' else False
         parsed_line['solution'] = var_assignments
     return parsed_line
 
