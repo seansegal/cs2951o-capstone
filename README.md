@@ -25,7 +25,7 @@ is running.
 If you would like to give users access to a new solver, you will need to add a directory
 for the new solver in `solvers/<solver-type>/<solver-name>`. Please ensure that the root of the directory has a `run.sh` script that has executable permissions. To add executable permissions, run `chmod u+x run.sh` from the root of the solver directory. Next, you should, open `server/app.py` and add the path to the solver to the SOLVER dictionary.  
 
-Note that you can any type of solver as long as it expects exactly one file as input as
+Note that you can add any type of solver as long as it expects exactly one file as input as
 prints out a result in the CS2951O format as the last time. The parser for the solution
 itself is expecting a SAT assignment so if this project is extended to add new solvers,
 this code would likely need to changed.

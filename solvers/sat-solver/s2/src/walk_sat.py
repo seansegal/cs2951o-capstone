@@ -158,7 +158,7 @@ if __name__ == '__main__':
     if getBack is False:
         getBack = "UNSAT"
     else:
-        newGetBack = "SAT Solution: "
+        newGetBack = "SAT "
         for k, v in getBack.iteritems():
             newGetBack = newGetBack + str(k) + " " + str(v) + " "
         getBack = newGetBack[:-1]

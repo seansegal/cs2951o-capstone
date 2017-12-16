@@ -188,7 +188,6 @@ def instance():
 
 def parse_last_line(last_line):
     line_chunks = last_line.split(': ')
-    print(line_chunks)
     parsed_line = {}
     parsed_line['time'] = line_chunks[2][:-7]
     if line_chunks[3].startswith('UNSAT'):
@@ -198,7 +197,7 @@ def parse_last_line(last_line):
         solution = line_chunks[3][4:-1].split(' ')
         var_assignments = {}
         for i in range(0, len(solution), 2):
-            var_assignments[solution[i]] = True if solution[i+1] == 'true' else False
+            var_assignments[solution[i]] = True if (solution[i+1] == 'true' or solution[i+1] == 'True') else False
         parsed_line['solution'] = var_assignments
     return parsed_line
 

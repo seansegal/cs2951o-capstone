@@ -23,12 +23,12 @@ def parse_input(cnf_file):
 				current_clause.add(literal)
 			clauses.append(current_clause)
 
-		print "Number of variables: {}".format(num_vars)
-		print "Number of clauses: {}".format(num_clauses)
-		print "Variables: {}".format(list(variables))
+		# print "Number of variables: {}".format(num_vars)
+		# print "Number of clauses: {}".format(num_clauses)
+		# print "Variables: {}".format(list(variables))
 
-		for idx, c in enumerate(clauses):
-			print "Clause {}: {}".format(idx, list(c))
+		# for idx, c in enumerate(clauses):
+			# print "Clause {}: {}".format(idx, list(c))
 
 	return variables, clauses
 
@@ -55,10 +55,10 @@ def parse_input_walk_sat(cnf_file):
 				current_clause.append(literal)
 			clauses.append(current_clause)
 
-		print "Number of variables: {}".format(num_vars)
-		print "Number of clauses: {}".format(num_clauses)
-		print "Variables: {}".format(list(variables))
+		# print "Number of variables: {}".format(num_vars)
+		# print "Number of clauses: {}".format(num_clauses)
+		# print "Variables: {}".format(list(variables))
 
-		for idx, c in enumerate(clauses):
-			print "Clause {}: {}".format(idx, list(c))
+		# for idx, c in enumerate(clauses):
+			# print "Clause {}: {}".format(idx, list(c))
 	return variables, clauses
