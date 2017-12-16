@@ -58,10 +58,25 @@ only be used on satisfiable instances.
 
 ### Endpoints
 * POST /sat-solver/solve: Solves a SAT instance synchronously.
+    * { 'fileName' : string (optional),  
+    'fileContents' : binary string,  
+    'solverName' : string (optional),   
+      }
 * POST /sat-solver/instance: Starts a solver job. Returns a fileId used to check the status of the job.
+    * { 'fileName' : 'file name' (optional),  
+'fileContents' : binary string,  
+'solverName' : string,   
+  }
 * GET /sat-solver/instance?fileId=<fileId>: Returns information or the solution on a file that was uploaded.
 * GET /solvers: Returns a list of all solvers.
-* POST /sat-solver/json/instance: A JSON WEB API for solving a SAT instance. 
+* POST /sat-solver/json/instance: A JSON WEB API for solving a SAT instance.
+    * { 'fileFormat' : string (optional),  
+'numVariables' : int,  
+'numClauses' : int,   
+'clauses' : list of int,  
+'fileName' : string (optional),  
+'solverName' : string (optional),  
+}
 
 ## Web Interface
 ![picture of web interface](https://i.imgur.com/AhrrMCL.png)
